@@ -1,4 +1,4 @@
 # QUT
-All Qut projects
-We do not support plagiarism.
+All Qut projects<br>
+We do not support plagiarism.<br>
 https://www.citewrite.qut.edu.au/academichonesty/

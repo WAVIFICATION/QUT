@@ -1,0 +1,3 @@
+. select only 9 am and 3 pm data
+. split one row of weather data into 3 pm and 9 am rows.
+. join the weather and airQ for each time data based on date

@@ -297,7 +297,6 @@ totalData<-rbind(total9am,total3pm)
 #end_Integrate_Jerin
 #
 #
-class(totalData)
 
 #Start_Correlation_Nikhil_Tissa
 
@@ -305,6 +304,8 @@ cor_data<-totalData[, !(names(totalData) %in% c("Date" ,"WindGustDir","RainToday
 corrplot(cor(as.matrix(cor_data)),method = "circle")
 
 #End_Correlation_Tissa_Nikhil
+
+
 #
 #
 #start_DTree_Jerin

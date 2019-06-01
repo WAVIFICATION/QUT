@@ -311,13 +311,30 @@ totalData<-rbind(total9am,total3pm)
 #
 #
 #start_Clustering_Jerin
-mydata<-totalData
-row.names(mydata)<-paste(mydata$Date,mydata$Time)
-mydata<-mydata[, !(names(mydata) %in% c("Date","Time"))]
+#row.names(mydata)<-paste(mydata$Date,mydata$Time)
+total9am<-total9am[, !(names(total9am) %in% c("Time","WindGustDir"))]
+total3pm<-total3pm[, !(names(total3pm) %in% c("Time","WindGustDir"))]
+#row.names(total9am)<-total9am$Date
+#row.names(total3pm)<-total3pm$Date
+mydata<-total9am[total9am$Date %in% total3pm$Date,]
+for(i in 1:nrow(mydata))#take avarage of 9am and 3pm data for each date
+{
+  for (j in 1:nrows(total3pm)) {
+    if(total3pm$Date[j]==mydata$Date[i]){
+      for(k in names(mydata)){
+        mydata[[k]][i]<-(mydata[[k]][i]+total3pm[[k]][j])
+      }
+    }
+  }
+}
+row.names(mydata)<-mydata$Date#naming rows with dates
+mydata<-mydata[, !(names(mydata) %in% c("Date"))]#removing dates from attrbute list
+
+
 for( i in names(mydata)){
   mydata[[i]]<-as.numeric(mydata[[i]])
 }
-mydata
+
 mydata <- na.omit(mydata) # listwise deletion of missing
 mydata <- scale(mydata) # standardize variables
 wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
@@ -327,7 +344,7 @@ wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
 set.seed(123)
 #fviz_nbclust(mydata, kmeans, nstart = 25,  method = "gap_stat", nboot = 100)+
 # labs(subtitle = "Gap statistic method")
-cluster<-kmeans(mydata, centers = 10, nstart = 25)
+cluster<-kmeans(mydata, centers = 9, nstart = 25)
 fviz_cluster(cluster, data = mydata)
 #end_Clustering_Jerin
 #

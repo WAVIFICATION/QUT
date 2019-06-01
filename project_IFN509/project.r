@@ -1,6 +1,6 @@
 library(ggplot2)
-southBrisTotal<- read.csv("/Users/nikhilnair/GitHub/QUT/project_IFN509/southbrisbane-aq-2018.csv")
-weatherTotal<- read.csv("/Users/nikhilnair/GitHub/QUT/project_IFN509/weatherAUS.csv")
+southBrisTotal<- read.csv("southbrisbane-aq-2018.csv")
+weatherTotal<- read.csv("weatherAUS.csv")
 #class(southBrisTotal$Time)
 southBris<-subset(southBrisTotal,!is.na(southBrisTotal$Date))
 southBris$Date<-as.Date(southBris$Date, format="%d/%m/%Y")
@@ -283,32 +283,41 @@ for (a in (predictableweatherqualities))
 
 # End_Data_Cleaning_Nikhil_Tissa
 
-
-
+#
+#
+#start_Integrate_Jerin
 total9am<- merge(weather9am,southBris9am,by="Date")
 total3pm<- merge(weather3pm,southBris3pm,by="Date")
-total9am$time<-"9am"
-total3pm$time<-"3pm"
 names(total3pm)<-c("Date","MinTemp","MaxTemp","Rainfall","Evaporation","Sunshine","WindGustDir","WindGustSpeed","RainToday","RISK_MM","RainTomorrow","WindDir","Humidity","Pressure","Cloud","Temp","Time","Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Air.Temperature..degC.","Relative.Humidity....","Nitrogen.Oxide..ppm.","Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.","Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 names(total9am)<-c("Date","MinTemp","MaxTemp","Rainfall","Evaporation","Sunshine","WindGustDir","WindGustSpeed","RainToday","RISK_MM","RainTomorrow","WindDir","Humidity","Pressure","Cloud","Temp","Time","Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Air.Temperature..degC.","Relative.Humidity....","Nitrogen.Oxide..ppm.","Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.","Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
+total9am$Time<-"9am"
+total3pm$Time<-"3pm"
 totalData<-rbind(total9am,total3pm)
 
-summary(totalData)
+#end_Integrate_Jerin
+#
+#
 
+#
+#
+#start_DTree_Jerin
 
-
+#end_DTree_Jerin
+#
+#
 
 
 
 #
 #
 #start_Clustering_Jerin
-mydata<-southBris3pm
-row.names(mydata)<-mydata$Date
+mydata<-totalData
+row.names(mydata)<-paste(mydata$Date,mydata$Time)
 mydata<-mydata[, !(names(mydata) %in% c("Date","Time"))]
 for( i in names(mydata)){
   mydata[[i]]<-as.numeric(mydata[[i]])
 }
+mydata
 mydata <- na.omit(mydata) # listwise deletion of missing
 mydata <- scale(mydata) # standardize variables
 wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
@@ -316,9 +325,9 @@ wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
 #  geom_vline(xintercept = 3, linetype = 2)+
 #  labs(subtitle = "Elbow method")
 set.seed(123)
-#fviz_nbclust(mydata, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
+#fviz_nbclust(mydata, kmeans, nstart = 25,  method = "gap_stat", nboot = 100)+
 # labs(subtitle = "Gap statistic method")
-cluster<-kmeans(mydata, centers = 2, nstart = 25)
+cluster<-kmeans(mydata, centers = 10, nstart = 25)
 fviz_cluster(cluster, data = mydata)
 #end_Clustering_Jerin
 #

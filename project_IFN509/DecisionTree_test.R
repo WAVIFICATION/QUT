@@ -5,24 +5,6 @@ str(southb)
 
 summary(southb)
 
-southb_plot <- ggplot(southb, aes(fill = Nitrogen.Oxides..ppm., color = Nitrogen.Oxides..ppm.))
-southb_plot
-southb_plot + geom_histogram(aes(x = Wind.Direction..degTN.), alpha = 0.5, bins = 25)
-southb_plot + geom_histogram(aes(x = Wind.Speed..m.s.), alpha = 0.5, bins = 25)
-southb_plot + geom_histogram(aes(x = Air.Temperature..degC.), alpha = 0.5, bins = 25)
-southb_plot + geom_histogram(aes(x = Relative.Humidity....), alpha = 0.5, bins = 25)
-
-southb_plot + geom_point(aes(x = Wind.Direction..degTN., y = Wind.Speed..m.s.))
-southb_plot + geom_point(aes(x = Air.Temperature..degC., y = Relative.Humidity....))
-
-predictions <- predict(southb_ctree, newdata = test_data)
-
-table(predictions, test_data$Nitrogen.Oxide..ppm.)
-
-library(caret)
-library(e1071)
-confusionMatrix(predict(southb_ctree, newdata = test_data), test_data$Nitrogen.Oxide..ppm.)
-
 
 a <- filter(southb, Nitrogen.Oxides..ppm.>= 0.0000 & Nitrogen.Oxides..ppm.<= 0.0130) %>%
   mutate(Oxide_Range= "verylow")
@@ -80,6 +62,10 @@ plot(southb_ctree1)
 predictions <- predict(southb_ctree1, newdata = test_data1)
 
 predictions
-table(predictions, test_data$Nitrogen.Oxide..ppm.)
+table(predictions, test_data1$Oxide_Range)
+
+library(caret)
+library(e1071)
+confusionMatrix(predict(southb_ctree1, newdata = test_data), test_data1$Oxide_Range)
 
 

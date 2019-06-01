@@ -32,6 +32,7 @@ total3pm$time<-"3pm"
 names(total3pm)<-c("Date","MinTemp","MaxTemp","Rainfall","Evaporation","Sunshine","WindGustDir","WindGustSpeed","RainToday","RISK_MM","RainTomorrow","WindDir","Humidity","Pressure","Cloud","Temp","Time","Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Air.Temperature..degC.","Relative.Humidity....","Nitrogen.Oxide..ppm.","Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.","Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 names(total9am)<-c("Date","MinTemp","MaxTemp","Rainfall","Evaporation","Sunshine","WindGustDir","WindGustSpeed","RainToday","RISK_MM","RainTomorrow","WindDir","Humidity","Pressure","Cloud","Temp","Time","Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Air.Temperature..degC.","Relative.Humidity....","Nitrogen.Oxide..ppm.","Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.","Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 totalData<-rbind(total9am,total3pm)
+
 summary(totalData)
 
 #i<-"Sunshine"
@@ -291,7 +292,27 @@ for (a in (predictableweatherqualities))
 # End_Data_Cleaning_Nikhil_Tissa
 
 
-
-
-
+#
+#
+#start_Clustering_Jerin
+mydata<-southBris3pm
+row.names(mydata)<-mydata$Date
+mydata<-mydata[, !(names(mydata) %in% c("Date","Time"))]
+for( i in names(mydata)){
+  mydata[[i]]<-as.numeric(mydata[[i]])
+}
+mydata <- na.omit(mydata) # listwise deletion of missing
+mydata <- scale(mydata) # standardize variables
+wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
+#fviz_nbclust(mydata, kmeans, method = "wss") +
+#  geom_vline(xintercept = 3, linetype = 2)+
+#  labs(subtitle = "Elbow method")
+set.seed(123)
+#fviz_nbclust(mydata, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
+# labs(subtitle = "Gap statistic method")
+cluster<-kmeans(mydata, centers = 2, nstart = 25)
+fviz_cluster(cluster, data = mydata)
+#end_Clustering_Jerin
+#
+#
 

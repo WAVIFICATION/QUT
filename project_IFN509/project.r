@@ -37,6 +37,8 @@ names(total9am)<-c("Date","MinTemp","MaxTemp","Rainfall","Evaporation","Sunshine
 totalData<-rbind(total9am,total3pm)
 summary(southBris3pm)
 
+#
+#
 #start_Clustering_Jerin
 mydata<-southBris3pm
 row.names(mydata)<-mydata$Date
@@ -56,3 +58,5 @@ set.seed(123)
 cluster<-kmeans(mydata, centers = 2, nstart = 25)
 fviz_cluster(cluster, data = mydata)
 #end_Clustering_Jerin
+#
+#

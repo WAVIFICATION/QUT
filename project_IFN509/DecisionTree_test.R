@@ -1,5 +1,5 @@
 library(tidyverse)
-
+library(party)
 southb <- read.csv("southbrisbane-aq-2018.csv")
 str(southb)
 
@@ -38,7 +38,7 @@ i <- rbind(h,e)
 j <- rbind(i,z)
 
 southb_plot1 <- ggplot(i, aes(fill = Oxide_Range, color = Oxide_Range))
-southb_plot
+#southb_plot
 
 i$Oxide_Range <- as.factor(i$Oxide_Range)
 str(i)
@@ -47,25 +47,24 @@ set.seed(1234)
 ind <- sample(2, nrow(i), replace=TRUE, prob=c(0.7, 0.3))
 ind
 train_data1 <- i[ind==1,]
-train_data
+#train_data
 test_data1 <- i[ind==2,]
-test_data
+#test_data
 
 
 formula1 <- Oxide_Range ~ Air.Temperature..degC. 
 
 southb_ctree1 <- ctree(formula1, data = train_data1)
-southb_ctree1
+#southb_ctree1
 
 plot(southb_ctree1)
 
 predictions <- predict(southb_ctree1, newdata = test_data1)
 
-predictions
+
 table(predictions, test_data1$Oxide_Range)
+
 
 library(caret)
 library(e1071)
-confusionMatrix(predict(southb_ctree1, newdata = test_data), test_data1$Oxide_Range)
-
-
+confusionMatrix(predict(southb_ctree1, newdata = test_data1), test_data1$Oxide_Range)

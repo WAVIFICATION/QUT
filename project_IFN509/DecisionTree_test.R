@@ -72,8 +72,7 @@ test_data
 
 formula1 <- Oxide_Range ~ Air.Temperature..degC. 
 
-southb_ctree1 <- ctree(formula1, data = train_data1,
-                       maxdepth = 3)
+southb_ctree1 <- ctree(formula1, data = train_data1)
 southb_ctree1
 
 plot(southb_ctree1)

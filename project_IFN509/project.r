@@ -1,6 +1,6 @@
 library(ggplot2)
-southBrisTotal<- read.csv("/Users/nikhilnair/GitHub/QUT/project_IFN509/southbrisbane-aq-2018.csv")
-weatherTotal<- read.csv("/Users/nikhilnair/GitHub/QUT/project_IFN509/weatherAUS.csv")
+southBrisTotal<- read.csv("southbrisbane-aq-2018.csv")
+weatherTotal<- read.csv("weatherAUS.csv")
 #class(southBrisTotal$Time)
 southBris<-subset(southBrisTotal,!is.na(southBrisTotal$Date))
 southBris$Date<-as.Date(southBris$Date, format="%d/%m/%Y")
@@ -22,8 +22,7 @@ weather3pm<-data.frame("Date"= weatherTotal$Date, weatherTotal$MinTemp, weatherT
                        weatherTotal$RISK_MM, weatherTotal$RainTomorrow,
                        weatherTotal$WindDir3pm, weatherTotal$Humidity3pm, weatherTotal$Pressure3pm,
                        weatherTotal$Cloud3pm, weatherTotal$Temp3pm)
-#names(weather9am)
-#names(southBris9am)
+
 
 total9am<- merge(weather9am,southBris9am,by="Date")
 total3pm<- merge(weather3pm,southBris3pm,by="Date")
@@ -45,48 +44,27 @@ summary(totalData)
 #
 # Start_Data_Cleaning_Nikhil_Tissa
 
-#Hard_Reject_Unpredictable_Column_values
-#Tissa
-#Weather9am
 
 unpredictableweatherqualities<-c("weatherTotal.Cloud9am","weatherTotal.Pressure9am","weatherTotal.Humidity9am","weatherTotal.WindDir9am","weatherTotal.RainTomorrow","weatherTotal.RISK_MM","weatherTotal.RainToday","weatherTotal.WindGustSpeed","weatherTotal.Sunshine","weatherTotal.Evaporation","weatherTotal.Rainfall")
 for (i in (unpredictableweatherqualities))
 {
   
   weather9am <- weather9am[complete.cases(weather9am[[i]]),]
-}
-
-#
-#Weather3pm
-#Tissa
-unpredictableweatherqualities<-c("weatherTotal.Cloud3pm","weatherTotal.Pressure3pm","weatherTotal.Humidity3pm","weatherTotal.WindDir3pm","weatherTotal.RainTomorrow","weatherTotal.RISK_MM","weatherTotal.RainToday","weatherTotal.WindGustSpeed","weatherTotal.Sunshine","weatherTotal.Evaporation","weatherTotal.Rainfall")
-for (i in (unpredictableweatherqualities))
-{
-  
   weather3pm <- weather3pm[complete.cases(weather3pm[[i]]),]
 }
 
-#
-#southbris9am
-#Tissa
+
+
 unpredictableairqualities<-c("Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Relative.Humidity....")
 for (i in (unpredictableairqualities))
 {
   
-  print(complete.cases(southBris9am[[i]]))
+  #print(complete.cases(southBris9am[[i]]))
   southBris9am <- southBris9am[complete.cases(southBris9am[[i]]),]
-}
-#
-#southbris3pm
-#Tissa
-unpredictableairqualities<-c("Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Relative.Humidity....")
-for (i in (unpredictableairqualities))
-{
-  
-  print(complete.cases(southbris3pm[[i]]))
   southbris3pm <- southbris3pm[complete.cases(southbris3pm[[i]]),]
 }
-#
+
+
 
 #Soft Reject_Predicatble_Column_Values
 #Nikhil
@@ -99,14 +77,14 @@ for (i in (predictableairqualities))
   outlier_value<-boxplot.stats(southBris9am[[i]])$out
   for(j in 3:(nrow(southBris9am)-3))
   {
-    if(southBris9am[[i]][j] %in% outlier_value)
+    if((southBris9am[[i]][j] %in% outlier_value)|(is.na(southBris9am[[i]][j])))
     {
       k<-0
       temp<-vector()
       ani<-j-2
       while(k!=4)
       {
-        if(!(southBris9am[[i]][ani] %in% outlier_value))
+        if((!(southBris9am[[i]][ani] %in% outlier_value))&(!is.na(southBris9am[[i]][ani])))
         {
           #move the value to temp
           temp<-c(temp,southBris9am[[i]][ani])
@@ -117,7 +95,7 @@ for (i in (predictableairqualities))
         ani<-ani+1
       }
       southBris9am[[i]][j]<-mean(temp)
-      print(southBris9am[[i]][j])
+      #print(southBris9am[[i]][j])
     }
   }
 }
@@ -131,14 +109,14 @@ for (i in (predictableairqualities))
   outlier_value<-boxplot.stats(southBris3pm[[i]])$out
   for(j in 3:(nrow(southBris3pm)-3))
   {
-    if(southBris3pm[[i]][j] %in% outlier_value)
+    if((southBris3pm[[i]][j] %in% outlier_value)|(is.na(southBris3pm[[i]][j])))
     {
       k<-0
       temp<-vector()
       ani<-j-2
       while(k!=4)
       {
-        if(!(southBris3pm[[i]][ani] %in% outlier_value))
+        if((!(southBris3pm[[i]][ani] %in% outlier_value))&(!is.na(southBris3pm[[i]][ani])))
         {
           #move the value to temp
           temp<-c(temp,southBris3pm[[i]][ani])
@@ -153,73 +131,7 @@ for (i in (predictableairqualities))
     }
   }
 }
-#
-#Soft_Rejecting_NA_values_with_mean
 
-#SouthBris3pm
-#Nikhil
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
-predictableairqualities<-c("Air.Temperature..degC.", "Nitrogen.Oxide..ppm.", "Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.", "Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
-for (a in (predictableairqualities))
-{
-  i<-a
-  for(j in 3:(nrow(southBris3pm)-3))
-  {
-    if(is.na(southBris3pm[[i]][j]))
-    {
-      k<-0
-      temp<-vector()
-      ani<-j-2
-      while(k!=4)
-      {
-        if(!is.na(southBris3pm[[i]][ani]))
-        {
-          #move the value to temp
-          temp<-c(temp,southBris3pm[[i]][ani])
-          #increment ani
-          ani<-ani+1
-        }
-        #increment k
-        k<-k+1
-      }
-      southBris3pm[[i]][j]<-mean(temp)
-      print(southBris3pm[[i]][j])
-    }
-  }
-}
-#
-#SouthBris9pm
-#Nikhil
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
-predictableairqualities<-c("Air.Temperature..degC.", "Nitrogen.Oxide..ppm.", "Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.", "Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
-for (a in (predictableairqualities))
-{
-  i<-a
-  for(j in 3:(nrow(southBris9am)-3))
-  {
-    if(is.na(southBris9am[[i]][j]))
-    {
-      k<-0
-      temp<-vector()
-      ani<-j-2
-      while(k!=4)
-      {
-        if(!is.na(southBris9am[[i]][ani]))
-        {
-          #move the value to temp
-          temp<-c(temp,southBris9am[[i]][ani])
-          #increment ani
-          ani<-ani+1
-        }
-        #increment k
-        k<-k+1
-      }
-      southBris9am[[i]][j]<-mean(temp)
-      print(southBris9am[[i]][j])
-    }
-  }
-}
-summary(southBris9am)
 #
 #weather9am
 #Tissa

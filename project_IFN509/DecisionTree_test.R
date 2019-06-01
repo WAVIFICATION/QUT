@@ -83,5 +83,3 @@ predictions
 table(predictions, test_data$Nitrogen.Oxide..ppm.)
 
 
-aufprallentree <- ctree(case ~., data = aufprallen,
-                        control = ctree_control(minsplit = 10, minbucket = 5, multiway = TRUE))

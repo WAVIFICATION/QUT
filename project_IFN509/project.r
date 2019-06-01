@@ -1,6 +1,6 @@
 library(ggplot2)
-southBrisTotal<- read.csv("southbrisbane-aq-2018.csv")
-weatherTotal<- read.csv("weatherAUS.csv")
+southBrisTotal<- read.csv("/Users/nikhilnair/GitHub/QUT/project_IFN509/southbrisbane-aq-2018.csv")
+weatherTotal<- read.csv("/Users/nikhilnair/GitHub/QUT/project_IFN509/weatherAUS.csv")
 #class(southBrisTotal$Time)
 southBris<-subset(southBrisTotal,!is.na(southBrisTotal$Date))
 southBris$Date<-as.Date(southBris$Date, format="%d/%m/%Y")
@@ -297,7 +297,14 @@ totalData<-rbind(total9am,total3pm)
 #end_Integrate_Jerin
 #
 #
+class(totalData)
 
+#Start_Correlation_Nikhil_Tissa
+
+cor_data<-totalData[, !(names(totalData) %in% c("Date" ,"WindGustDir","RainToday","RainTomorrow","WindDir","Time"))]
+corrplot(cor(as.matrix(cor_data)),method = "circle")
+
+#End_Correlation_Tissa_Nikhil
 #
 #
 #start_DTree_Jerin

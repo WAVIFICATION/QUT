@@ -382,8 +382,7 @@ mydata<-AverageTimeTotalData
 mydata$Date<-as.Date(mydata$Date)
 row.names(mydata)<-mydata$Date#naming rows with dates
 mydata<-mydata[, !(names(mydata) %in% c("Date","Temp","WindDir","Wind.Sigma.Theta..deg.",
-                                        "Wind.Speed.Std.Dev..m.s.","Nitrogen.Oxide..ppm.",
-                                        "Nitrogen.Dioxide..ppm.","Cloud","RainTomorrow",
+                                        "Wind.Speed.Std.Dev..m.s.","Cloud","RainTomorrow",
                                         "WindGustSpeed"))]#removing dates from attrbute list
 
 

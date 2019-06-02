@@ -427,7 +427,8 @@ mydata$Date<-as.Date(mydata$Date)
 row.names(mydata)<-mydata$Date#naming rows with dates
 mydata<-mydata[, !(names(mydata) %in% c("Date","Temp","WindDir","Wind.Sigma.Theta..deg.",
                                         "Wind.Speed.Std.Dev..m.s.","Nitrogen.Oxide..ppm.",
-                                        "Nitrogen.Dioxide..ppm.","Cloud","RainTomorrow"))]#removing dates from attrbute list
+                                        "Nitrogen.Dioxide..ppm.","Cloud","RainTomorrow",
+                                        "WindGustSpeed"))]#removing dates from attrbute list
 
 
 
@@ -439,9 +440,40 @@ fviz_nbclust(mydata, kmeans, nstart = 25,  method = "gap_stat", nboot = 100)+
  labs(subtitle = "Gap statistic method")#Using gap method to identify best number of clusters
 
 
-cluster<-kmeans(mydata, centers = 3, nstart = 25)
-fviz_cluster(cluster, data = mydata)#clustering
+cluster_i<-kmeans(mydata, centers = 3, nstart = 25)
+fviz_cluster(cluster_i, data = mydata)+#clustering
+  labs(subtitle = "Clustering of total relevent data")
 #end_Clustering_Jerin
 #
 #
 
+#
+#
+#start_cluster_analysis_Jerin
+# library(cluster) 
+# clusplot(mydata, cluster_i$cluster, color=TRUE, shade=TRUE, 
+#          labels=2, lines=0)
+# library(fpc)
+# plotcluster(mydata, cluster_i$cluster)
+# 
+# d <- dist(mydata, method = "euclidean") # distance matrix
+# fit <- hclust(d, method="ward") 
+# plot(fit) # display dendogram
+# groups <- cutree(fit, k=3) # cut tree into 5 clusters
+# # draw dendogram with red borders around the 5 clusters 
+# rect.hclust(fit, k=3, border="red")
+
+
+# library(pvclust)
+# fit <- pvclust(mydata, method.hclust="ward",
+#                method.dist="euclidean")
+# plot(fit) # dendogram with p values
+# # add rectangles around groups highly supported by the data
+# pvrect(fit, alpha=.95)
+
+
+
+
+#end_cluster_analysis_Jerin
+#
+#

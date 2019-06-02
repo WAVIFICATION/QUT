@@ -1,5 +1,7 @@
 library(ggplot2)
 library(corrplot)
+library(factoextra)
+library(NbClust)
 
 southBrisTotal<- read.csv("southbrisbane-aq-2018.csv")
 weatherTotal<- read.csv("weatherAUS.csv")
@@ -28,21 +30,6 @@ weather3pm<-data.frame("Date"= weatherTotal$Date, weatherTotal$MinTemp, weatherT
 #names(southBris9am)
 
 
-
-#i<-"Sunshine"
-#ggplot(data = total9am,aes(x = total9am$Date, y = total9am[[i]]))+
-#  geom_point()+
-#  geom_smooth()
-#max<-0
-
-#
-#
-# Start_Data_Cleaning_Nikhil_Tissa
-
-#Hard_Reject_Unpredictable_Column_values
-#Tissa
-#Weather9am
-
 unpredictableweatherqualities<-c("weatherTotal.Cloud9am","weatherTotal.Pressure9am","weatherTotal.Humidity9am","weatherTotal.WindDir9am","weatherTotal.RainTomorrow","weatherTotal.RISK_MM","weatherTotal.RainToday","weatherTotal.WindGustSpeed","weatherTotal.Sunshine","weatherTotal.Evaporation","weatherTotal.Rainfall")
 for (i in (unpredictableweatherqualities))
 {
@@ -50,9 +37,7 @@ for (i in (unpredictableweatherqualities))
   weather9am <- weather9am[complete.cases(weather9am[[i]]),]
 }
 
-#
-#Weather3pm
-#Tissa
+
 unpredictableweatherqualities<-c("weatherTotal.Cloud3pm","weatherTotal.Pressure3pm","weatherTotal.Humidity3pm","weatherTotal.WindDir3pm","weatherTotal.RainTomorrow","weatherTotal.RISK_MM","weatherTotal.RainToday","weatherTotal.WindGustSpeed","weatherTotal.Sunshine","weatherTotal.Evaporation","weatherTotal.Rainfall")
 for (i in (unpredictableweatherqualities))
 {
@@ -60,9 +45,7 @@ for (i in (unpredictableweatherqualities))
   weather3pm <- weather3pm[complete.cases(weather3pm[[i]]),]
 }
 
-#
-#southbris9am
-#Tissa
+
 unpredictableairqualities<-c("Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Relative.Humidity....")
 for (i in (unpredictableairqualities))
 {
@@ -70,23 +53,13 @@ for (i in (unpredictableairqualities))
   #print(complete.cases(southBris9am[[i]]))
   southBris9am <- southBris9am[complete.cases(southBris9am[[i]]),]
 }
-#
-#southbris3pm
-#Tissa
-unpredictableairqualities<-c("Wind.Direction..degTN.","Wind.Speed..m.s.","Wind.Sigma.Theta..deg.","Wind.Speed.Std.Dev..m.s.","Relative.Humidity....")
+
 for (i in (unpredictableairqualities))
 {
   
-  #print(complete.cases(southbris3pm[[i]]))
   southBris3pm <- southBris3pm[complete.cases(southBris3pm[[i]]),]
 }
-#
 
-#Soft Reject_Predicatble_Column_Values
-#Nikhil
-#Changing_outlier_values_from_Predicatble_Columns
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
-#southbris9am
 predictableairqualities<-c( "Nitrogen.Oxide..ppm.", "Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.", "Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 for (i in (predictableairqualities))
 {
@@ -102,23 +75,17 @@ for (i in (predictableairqualities))
       {
         if(!(southBris9am[[i]][ani] %in% outlier_value))
         {
-          #move the value to temp
           temp<-c(temp,southBris9am[[i]][ani])
-          #increment k
           k<-k+1
         }
         #increment ani
         ani<-ani+1
       }
       southBris9am[[i]][j]<-mean(temp)
-      #print(southBris9am[[i]][j])
     }
   }
 }
-#
-#southbris3pm
-#Nikhil
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
+
 predictableairqualities<-c( "Nitrogen.Oxide..ppm.", "Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.", "Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 for (i in (predictableairqualities))
 {
@@ -150,9 +117,7 @@ for (i in (predictableairqualities))
 #
 #Soft_Rejecting_NA_values_with_mean
 
-#SouthBris3pm
-#Nikhil
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
+
 predictableairqualities<-c("Air.Temperature..degC.", "Nitrogen.Oxide..ppm.", "Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.", "Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 for (a in (predictableairqualities))
 {
@@ -181,10 +146,7 @@ for (a in (predictableairqualities))
     }
   }
 }
-#
-#SouthBris9pm
-#Nikhil
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
+
 predictableairqualities<-c("Air.Temperature..degC.", "Nitrogen.Oxide..ppm.", "Nitrogen.Dioxide..ppm.","Nitrogen.Oxides..ppm.", "Carbon.Monoxide..ppm.","PM10..ug.m.3.","PM2.5..ug.m.3.")
 for (a in (predictableairqualities))
 {
@@ -213,11 +175,7 @@ for (a in (predictableairqualities))
     }
   }
 }
-#summary(southBris9am)
-#
-#weather9am
-#Tissa
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
+
 predictableweatherqualities<-c("weatherTotal.MinTemp", "weatherTotal.MaxTemp", "weatherTotal.Temp9am"  )
 
 for (a in (predictableweatherqualities))
@@ -248,10 +206,7 @@ for (a in (predictableweatherqualities))
   }
 }
 
-#
-#weather3pm
-#Nikhil
-#to replace NA values in weather 3pm by average of n-1,n-2,n+1,n+2 values
+
 predictableweatherqualities<-c("weatherTotal.MinTemp", "weatherTotal.MaxTemp", "weatherTotal.Temp3pm")
 
 for (a in (predictableweatherqualities))
@@ -283,7 +238,7 @@ for (a in (predictableweatherqualities))
 }
 #
 
-# End_Data_Cleaning_Nikhil_Tissa
+
 
 #
 #
@@ -342,22 +297,23 @@ corrplot(cor(as.matrix(cor_data)),method = "circle")
 #
 #
 #start_DTree_Vineela
+men<-summary(AverageTimeTotalData$Nitrogen.Oxides..ppm.)["Mean"]
+firstquad<-summary(AverageTimeTotalData$Nitrogen.Oxides..ppm.)["1st Qu."]
+thirdquad<-summary(AverageTimeTotalData$Nitrogen.Oxides..ppm.)["3rd Qu."]
 
-
-treedata <- filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.>= 0.0000 & Nitrogen.Oxides..ppm.<= 0.0130) %>%
+treedata <- filter(AverageTimeTotalData,  Nitrogen.Oxides..ppm.<= firstquad) %>%
   mutate(Oxide_Range= "verylow")
 
-treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> 0.0130 & Nitrogen.Oxides..ppm.<= 0.0230) %>%
+treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> firstquad & Nitrogen.Oxides..ppm.<= men) %>%
   mutate(Oxide_Range= "low"))
 
-treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> 0.0230 & Nitrogen.Oxides..ppm.<= 0.0302) %>%
+treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> men & Nitrogen.Oxides..ppm.<= thirdquad) %>%
   mutate(Oxide_Range= "medium"))
 
-treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> 0.0302 & Nitrogen.Oxides..ppm.<= 0.0390) %>%
+treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> thirdquad ) %>%
   mutate(Oxide_Range= "high"))
 
-treedata <- rbind(treedata, filter(AverageTimeTotalData, Nitrogen.Oxides..ppm.> 0.0390 & Nitrogen.Oxides..ppm.<= 0.2430) %>%
-  mutate(Oxide_Range= "veryhigh"))
+
 
 
 

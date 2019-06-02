@@ -308,9 +308,96 @@ corrplot(cor(as.matrix(cor_data)),method = "circle")
 
 #
 #
-#start_DTree_Jerin
+#
+#
+#start_DTree_Vineela_Jerin
+str(totalData)
 
-#end_DTree_Jerin
+summary(totalData)
+
+
+a <- filter(totalData, Nitrogen.Oxides..ppm.>= 0.0000 & Nitrogen.Oxides..ppm.<= 0.0130) %>%
+  mutate(Oxide_Range= "verylow")
+
+
+b <- filter(totalData, Nitrogen.Oxides..ppm.> 0.0130 & Nitrogen.Oxides..ppm.<= 0.0230) %>%
+  mutate(Oxide_Range= "low")
+
+
+
+c <- filter(totalData, Nitrogen.Oxides..ppm.> 0.0230 & Nitrogen.Oxides..ppm.<= 0.0302) %>%
+  mutate(Oxide_Range= "medium")
+
+
+d <- filter(totalData, Nitrogen.Oxides..ppm.> 0.0302 & Nitrogen.Oxides..ppm.<= 0.0390) %>%
+  mutate(Oxide_Range= "high")
+
+
+e <- filter(totalData, Nitrogen.Oxides..ppm.> 0.0390 & Nitrogen.Oxides..ppm.<= 0.2430) %>%
+  mutate(Oxide_Range= "veryhigh")
+
+
+
+
+
+f <- rbind(a,b)
+g<- rbind(c,d)    
+h <- rbind(f,g)
+i <- rbind(h,e)
+
+
+fit <- rpart(Oxide_Range ~ Air.Temperature..degC. + Wind.Speed..m.s. +
+               Wind.Direction..degTN. + Relative.Humidity....,
+             method="class", data=i)
+
+printcp(fit) # display the results
+plotcp(fit) # visualize cross-validation results
+summary(fit) # detailed summary of splits
+
+# plot tree
+plot(fit, uniform=TRUE,
+     main="Classification Tree for Air Quality")
+text(fit, use.n=TRUE, all=TRUE, cex=.8)
+# create attractive postscript plot of tree
+
+
+# prune the tree
+pfit<- prune(fit, cp=   fit$cptable[which.min(fit$cptable[,"xerror"]),"CP"])
+
+# plot the pruned tree
+plot(pfit, uniform=TRUE,
+     main="Pruned Classification Tree for Air Quality")
+text(pfit, use.n=TRUE, all=TRUE, cex=.8)
+
+
+#test and training data
+set.seed(1234)
+ind <- sample(2, nrow(i), replace=TRUE, prob=c(0.7, 0.3))
+ind
+train_data1 <- i[ind==1,]
+train_data1
+test_data1 <- i[ind==2,]
+test_data1
+
+#ctree
+train_data1$Wind.Direction..degTN.<-as.numeric(train_data1$Wind.Direction..degTN.)
+i$Oxide_Range<-as.factor(i$Oxide_Range)
+formula1 <-Oxide_Range ~ Air.Temperature..degC. + Wind.Speed..m.s. +
+  Wind.Direction..degTN. + Relative.Humidity.... 
+ctree1 <- ctree(formula1, data = train_data1)
+ctree1
+
+plot(ctree1)
+predictions <- predict(ctree1, newdata = test_data1)
+
+table(predictions, test_data1$Oxide_Range)
+
+
+library(caret)
+library(e1071)
+confusionMatrix(predict(ctree1, newdata = test_data1), test_data1$Oxide_Range)
+
+#end_DTree_Jerin_Vineela
 #
 #
 

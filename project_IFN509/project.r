@@ -284,12 +284,12 @@ for(i in 1:nrow(AverageTimeTotalData))#take avarage of 9am and 3pm data for each
 #
 #
 
-#Start_Correlation_Nikhil_Tissa
+#Start_Correlation_
 
 cor_data<-totalData[, !(names(totalData) %in% c("Date" ,"WindGustDir","RainToday","RainTomorrow","WindDir","Time"))]
 corrplot(cor(as.matrix(cor_data)),method = "circle")
 
-#End_Correlation_Tissa_Nikhil
+#End_Correlation_
 
 
 #
